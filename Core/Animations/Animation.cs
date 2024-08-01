@@ -30,7 +30,7 @@ namespace GameDev.Core.Animations
             currentFrame = frames[counter];
 
             secondCounter += gameTime.ElapsedGameTime.TotalSeconds;
-            int fps = 15;
+            int fps = 10;
 
             if(secondCounter >= 1d / fps)
             {

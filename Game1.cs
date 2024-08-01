@@ -34,7 +34,7 @@ namespace GameDev
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             _idleTexture = Content.Load<Texture2D>("Wizard/Idle-Sheet");
-            _runTexture = Content.Load<Texture2D>("Wizard/Run-Sheet");
+            _runTexture = Content.Load<Texture2D>("Wizard/Run-Sheetv2");
 
             InitializeGameObjects();
         }
