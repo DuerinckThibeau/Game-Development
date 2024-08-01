@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 
-namespace GameDev.Core.GameManagers
+namespace GameDev.Core.Managers
 {
     public class MovementManager
     {

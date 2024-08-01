@@ -1,6 +1,6 @@
 ﻿using GameDev.Core;
 using GameDev.Core.Input;
-using GameDev.Core.GameManagers;
+using GameDev.Core.Managers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -12,7 +12,8 @@ namespace GameDev
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        private Texture2D _texture;
+        private Texture2D _runTexture;
+        private Texture2D _idleTexture;
         Wizard wizard;
         
 
@@ -32,14 +33,15 @@ namespace GameDev
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            _texture = Content.Load<Texture2D>("Wizard/Run-Sheet");
+            _idleTexture = Content.Load<Texture2D>("Wizard/Idle-Sheet");
+            _runTexture = Content.Load<Texture2D>("Wizard/Run-Sheet");
 
             InitializeGameObjects();
         }
 
         private void InitializeGameObjects()
         {
-            wizard = new Wizard(_texture, new KeyboardReader(), new MovementManager());
+            wizard = new Wizard(_runTexture, _idleTexture, new KeyboardReader(), new MovementManager());
         }
 
         protected override void Update(GameTime gameTime)
