@@ -13,6 +13,9 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Maps/Level_1.tmx
+/copy:Maps/Level_1.tmx
+
 #begin Tiles/Assets.png
 /importer:TextureImporter
 /processor:TextureProcessor

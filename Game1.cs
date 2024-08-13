@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
-using TiledCS;
+using TiledSharp;
 
 namespace GameDev
 {
@@ -18,8 +18,8 @@ namespace GameDev
         private Texture2D _idleTexture;
         Wizard wizard;
 
-        private TiledMap _map;
-        private TiledTileset _tileset;
+        private TmxMap _map;
+        private MapManager mapManager;
         private Texture2D _tilesetTexture;
 
         private int _tileWidth;
@@ -44,22 +44,12 @@ namespace GameDev
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // Set the "Copy to Output Directory" property of these two files to `Copy if newer`
-            // by clicking them in the solution explorer.
-            _map = new TiledMap(Content.RootDirectory + "\\Maps/Level_1.tmx");
-            _tileset = new TiledTileset(Content.RootDirectory + "\\Tiles/Tiles.tsx");
-
-            // Not the best way to do this but it works. It looks for "exampleTileset.xnb" file
-            // which is the result of building the image file with "Content.mgcb".
-            _tilesetTexture = Content.Load<Texture2D>("Tiles/Assets");
-
-            _tileWidth = _tileset.TileWidth;
-            _tileHeight = _tileset.TileHeight;
-
-            // Amount of tiles on each row (left right)
-            _tilesetTilesWide = _tileset.Columns;
-            // Amount of tiels on each column (up down)
-            _tilesetTilesHeight = _tileset.TileCount / _tileset.Columns;
+            _map = new TmxMap("Content/Maps/Level_1.tmx");
+            var tileset = Content.Load<Texture2D>("Tiles/Assets");
+            var tileWidth = _map.Tilesets[0].TileWidth;
+            var tileHeight = _map.Tilesets[0].TileHeight;
+            var TileSetTilesWide = tileset.Width / tileWidth;
+            mapManager = new MapManager(_spriteBatch, _map, tileset, TileSetTilesWide, tileWidth, tileHeight);
 
 
             _idleTexture = Content.Load<Texture2D>("Wizard/Idle-Sheet");
@@ -86,46 +76,7 @@ namespace GameDev
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             _spriteBatch.Begin();
-            for (var i = 0; i < _map.Layers[0].data.Length; i++)
-            {
-                int gid = _map.Layers[0].data[i];
-
-                // Empty tile, do nothing
-                if (gid == 0)
-                {
-
-                }
-                else
-                {
-                    // Tileset tile ID
-                    // Looking at the exampleTileset.png
-                    // 0 = Blue
-                    // 1 = Green
-                    // 2 = Dark Yellow
-                    // 3 = Magenta
-                    int tileFrame = gid - 1;
-
-                    // Print the tile type into the debug console.
-                    // This assumes only one (1) `tiled tileset` is being used, so getting the first one.
-                    var tile = _map.GetTiledTile(_map.Tilesets[0], _tileset, gid);
-                    if (tile != null)
-                    {
-                        // This should print "Grass" for each grass tile in the map each draw call
-                        // so six (6) times.
-                        System.Diagnostics.Debug.WriteLine(tile.type);
-                    }
-
-                    int column = tileFrame % _tilesetTilesWide;
-                    int row = (int)Math.Floor((double)tileFrame / (double)_tilesetTilesWide);
-
-                    float x = (i % _map.Width) * _map.TileWidth;
-                    float y = (float)Math.Floor(i / (double)_map.Width) * _map.TileHeight;
-
-                    Rectangle tilesetRec = new Rectangle(_tileWidth * column, _tileHeight * row, _tileWidth, _tileHeight);
-
-                    _spriteBatch.Draw(_tilesetTexture, new Rectangle((int)x, (int)y, _tileWidth, _tileHeight), tilesetRec, Color.White);
-                }
-            }
+            mapManager.Draw(_spriteBatch);
             wizard.Draw(_spriteBatch);
             _spriteBatch.End();
 
