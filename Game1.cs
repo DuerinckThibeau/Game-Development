@@ -42,6 +42,8 @@ namespace GameDev
 
         protected override void LoadContent()
         {
+            SetFullScreen();
+
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             _map = new TmxMap("Content/Maps/Level_1.tmx");
@@ -81,6 +83,14 @@ namespace GameDev
             _spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        private void SetFullScreen()
+        {
+            _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+            Window.IsBorderless = true;
+            _graphics.ApplyChanges();
         }
     }
 }
