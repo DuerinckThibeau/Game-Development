@@ -14,6 +14,7 @@ namespace GameDev.Core
         Animation runAnimation;
         Animation idleAnimation;
         Animation currentAnimation;
+        Animation[] animations;
 
         MovementManager playerMovementManager;
 
@@ -43,21 +44,15 @@ namespace GameDev.Core
             Position = new Vector2(1, 1);
             Speed = new Vector2(2, 2);
 
-            runAnimation = new Animation();
-            runAnimation.AddFrame(new AnimationFrame(new Rectangle(0, 0, 64, 32)));
-            runAnimation.AddFrame(new AnimationFrame(new Rectangle(64, 0, 64, 32)));
-            runAnimation.AddFrame(new AnimationFrame(new Rectangle(128, 0, 64, 32)));
-            runAnimation.AddFrame(new AnimationFrame(new Rectangle(192, 0, 64, 32)));
-            runAnimation.AddFrame(new AnimationFrame(new Rectangle(256, 0, 64, 32)));
-            runAnimation.AddFrame(new AnimationFrame(new Rectangle(320, 0, 64, 32)));
+            animations = new Animation[]
+            {
+                new Animation(), // run
+                new Animation() // idle
+            };
 
-            idleAnimation = new Animation();
-            idleAnimation.AddFrame(new AnimationFrame(new Rectangle(0, 0, 32, 32)));
-            idleAnimation.AddFrame(new AnimationFrame(new Rectangle(32, 0, 32, 32)));
-            idleAnimation.AddFrame(new AnimationFrame(new Rectangle(64, 0, 32, 32)));
-            idleAnimation.AddFrame(new AnimationFrame(new Rectangle(96, 0, 32, 32)));
-
-            currentAnimation = idleAnimation;
+            animations[0].AddAnimation(6, 64, 32);
+            animations[1].AddAnimation(4, 32, 32);
+            currentAnimation = animations[1];
         }
 
         public void Update(GameTime gameTime)
@@ -69,22 +64,15 @@ namespace GameDev.Core
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            Texture2D currentTexture = currentAnimation == runAnimation ? wizardRunTexture : wizardIdleTexture;
+            Texture2D currentTexture = currentAnimation == animations[0] ? wizardRunTexture : wizardIdleTexture;
             SpriteEffects spriteEffects = isFacingRight ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
-            // Calculate the vertical offset based on the height of the current animation
-            float verticalOffset = currentAnimation == runAnimation ? runAnimationHeight - idleAnimationHeight : 0;
-
-            // Adjust the drawing position to keep the wizard at the same visual height
             Vector2 drawPosition = Position;
-            if (currentAnimation == idleAnimation)
-            {
-                drawPosition.Y += verticalOffset;
-            }
+           
 
             spriteBatch.Draw(currentTexture, drawPosition, currentAnimation.currentFrame.sourceRectangle, Color.White, 0f, Vector2.Zero, 1f, spriteEffects, 0f);
         }
-
+        
         private void Move()
         {
             Direction = InputReader.ReadInput();
@@ -92,7 +80,7 @@ namespace GameDev.Core
 
             if (Direction != Vector2.Zero)
             {
-                currentAnimation = runAnimation;
+                currentAnimation = animations[0];
                 if (Direction.X < 0)
                 {
                     isFacingRight = false;
@@ -104,7 +92,7 @@ namespace GameDev.Core
             }
             else
             {
-                currentAnimation = idleAnimation;
+                currentAnimation = animations[1];
             }
 
 
@@ -123,8 +111,8 @@ namespace GameDev.Core
                 Position = new Vector2(Position.X, Position.Y + verticalSpeed);
             }
 
-            // Simple ground collision detection
-            if (Position.Y >= 300) // Assuming ground level is at Y = 300
+            
+            if (Position.Y >= 300)
             {
                 Position = new Vector2(Position.X, 300);
                 verticalSpeed = 0;

@@ -19,16 +19,9 @@ namespace GameDev.Core.Animations
             frames = new List<AnimationFrame>();
         }
 
-
-        public void AddFrame(AnimationFrame animationFrame)
-        {
-            frames.Add(animationFrame);
-            currentFrame = frames[0];
-        }
         public void Update(GameTime gameTime) 
         {
             currentFrame = frames[counter];
-
             secondCounter += gameTime.ElapsedGameTime.TotalSeconds;
             int fps = 10;
 
@@ -41,6 +34,14 @@ namespace GameDev.Core.Animations
             if(counter >= frames.Count)
             {
                 counter = 0;
+            }
+        }
+
+        public void AddAnimation(int sprites, int width, int height)
+        {
+            for(int x = 0; x < sprites * width; x += width)
+            {
+                frames.Add(new AnimationFrame(new Rectangle(x, 0, width, height)));
             }
         }
         
