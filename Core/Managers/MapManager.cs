@@ -52,9 +52,6 @@ namespace GameDev.Core.Managers
             {
                 Console.WriteLine("Collision layer not found!");
             }
-
-
-
         }
 
         public void Draw(SpriteBatch spriteBatch)

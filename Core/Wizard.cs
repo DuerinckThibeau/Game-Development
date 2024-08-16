@@ -4,6 +4,7 @@ using GameDev.Core.Animations;
 using GameDev.Core.Interfaces;
 using GameDev.Core.Managers;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace GameDev.Core
 {
@@ -95,17 +96,28 @@ namespace GameDev.Core
 
             Direction = InputReader.ReadInput();
             playerMovementManager.Move(this);
+            bool collisionDetected = false;
 
             if (Direction != Vector2.Zero)
             {
                 currentAnimation = animations[0];
-                if (Direction.X < 0)
+                isFacingRight = Direction.X > 0;
+
+                Rectangle futureHitbox = new Rectangle((int)(Position.X + Direction.X * Speed.X), (int)Position.Y, Hitbox.Width, Hitbox.Height);
+
+                foreach (var collider in mapManager.Colliders)
                 {
-                    isFacingRight = false;
+                    if (futureHitbox.Intersects(collider))
+                    {
+                        Position = new Vector2(previousPosition.X, Position.Y);
+                        collisionDetected = true;
+                        break;
+                    }
                 }
-                else if (Direction.X > 0)
+
+                if (!collisionDetected)
                 {
-                    isFacingRight = true;
+                    Position = new Vector2(Position.X + Direction.X * Speed.X, Position.Y);
                 }
             }
             else
@@ -113,19 +125,6 @@ namespace GameDev.Core
                 currentAnimation = animations[1];
             }
 
-            
-            Rectangle futureHitbox = new Rectangle((int)(Position.X + Direction.X * Speed.X), (int)(Position.Y + verticalSpeed), Hitbox.Width, Hitbox.Height);
-
-            foreach (var collider in mapManager.Colliders)
-            {
-                if (futureHitbox.Intersects(collider))
-                {
-                    Position = previousPosition;
-                    return;
-                }
-            }
-
-            
             if (isGrounded && (Keyboard.GetState().IsKeyDown(Keys.Space) || Keyboard.GetState().IsKeyDown(Keys.Up)))
             {
                 verticalSpeed = -jumpStrength;
@@ -133,47 +132,47 @@ namespace GameDev.Core
             }
         }
 
-
         private void ApplyGravity()
         {
             if (!isGrounded)
             {
                 verticalSpeed += gravity;
-                Vector2 newPosition = new Vector2(Position.X, Position.Y + verticalSpeed);
+            }
 
-                // Maak een toekomstige hitbox om te controleren op botsingen
-                Rectangle futureHitbox = new Rectangle((int)newPosition.X, (int)newPosition.Y, Hitbox.Width, Hitbox.Height);
+            Vector2 futurePosition = new Vector2(Position.X, Position.Y + verticalSpeed);
+            Rectangle futureHitbox = new Rectangle((int)futurePosition.X, (int)futurePosition.Y, Hitbox.Width, Hitbox.Height);
 
-                // Check voor botsingen met de kaart
-                foreach (var collider in mapManager.Colliders)
+            bool collisionDetected = false;
+
+            foreach (var collider in mapManager.Colliders)
+            {
+                if (futureHitbox.Intersects(collider))
                 {
-                    if (futureHitbox.Intersects(collider))
+                    if (verticalSpeed > 0)
                     {
-                        // Als er een botsing is, stel de speler terug naar een correcte positie
+                        Position = new Vector2(Position.X, collider.Top - Hitbox.Height);
                         verticalSpeed = 0;
                         isGrounded = true;
-                        Position = new Vector2(Position.X, collider.Top - Hitbox.Height); // Plaats de speler bovenop de tegel
-                        return;
                     }
+                    else if (verticalSpeed < 0)
+                    {
+                        Position = new Vector2(Position.X, collider.Bottom);
+                        verticalSpeed = 0;
+                    }
+                    collisionDetected = true;
+                    break;
                 }
-
-                Position = newPosition; // Geen botsingen, update positie
             }
 
-            // Controleer of de speler op de grond is
-            if (Position.Y >= 300) // Dit is een tijdelijke check, zorg dat je dit vervangt door een correcte waarde
+            if (!collisionDetected)
             {
-                Position = new Vector2(Position.X, 300);
-                verticalSpeed = 0;
-                isGrounded = true;
+                Position = futurePosition;
+                isGrounded = false;
             }
         }
-
-
-
         private void UpdateHitbox()
         {
-            Hitbox = new Rectangle((int)Position.X, (int)Position.Y, 32, 32);
+            Hitbox = new Rectangle((int)Position.X, (int)Position.Y, 25, 32);
         }
     }
 }
