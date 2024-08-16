@@ -17,6 +17,7 @@ namespace GameDev.Core
         Animation[] animations;
 
         MovementManager playerMovementManager;
+        private MapManager mapManager;
 
         public Vector2 Position { get; set; }
         public Vector2 Acceleration { get; set; }
@@ -35,12 +36,13 @@ namespace GameDev.Core
         private float gravity = 0.5f;
         private float jumpStrength = 12f;
 
-        public Wizard(Texture2D runTexture, Texture2D idleTexture, IInputReader inputReader, MovementManager movementManager)
+        public Wizard(Texture2D runTexture, Texture2D idleTexture, IInputReader inputReader, MovementManager movementManager, MapManager mapManager)
         {
             wizardRunTexture = runTexture;
             wizardIdleTexture = idleTexture;
             InputReader = inputReader;
             playerMovementManager = movementManager;
+            this.mapManager = mapManager;
 
             Acceleration = new Vector2(0.1f, 0.1f);
             Position = new Vector2(1, 1);
@@ -56,6 +58,7 @@ namespace GameDev.Core
             animations[1].AddAnimation(4, 32, 32);
             currentAnimation = animations[1];
         }
+
 
         public void Update(GameTime gameTime)
         {
@@ -77,11 +80,19 @@ namespace GameDev.Core
             Texture2D hitboxTexture = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
             hitboxTexture.SetData(new[] { Color.White });
             spriteBatch.Draw(hitboxTexture, Hitbox, Color.Red * 0.5f);
+
+            // Tiles (hitbox) tekenen voor testing
+            foreach (var collider in mapManager.Colliders)
+            {
+                spriteBatch.Draw(hitboxTexture, collider, Color.Green * 0.5f);
+            }
         }
 
 
         private void Move()
         {
+            Vector2 previousPosition = Position;
+
             Direction = InputReader.ReadInput();
             playerMovementManager.Move(this);
 
@@ -102,30 +113,63 @@ namespace GameDev.Core
                 currentAnimation = animations[1];
             }
 
+            
+            Rectangle futureHitbox = new Rectangle((int)(Position.X + Direction.X * Speed.X), (int)(Position.Y + verticalSpeed), Hitbox.Width, Hitbox.Height);
 
-            if (isGrounded && Keyboard.GetState().IsKeyDown(Keys.Space) || isGrounded && Keyboard.GetState().IsKeyDown(Keys.Up))
+            foreach (var collider in mapManager.Colliders)
+            {
+                if (futureHitbox.Intersects(collider))
+                {
+                    Position = previousPosition;
+                    return;
+                }
+            }
+
+            
+            if (isGrounded && (Keyboard.GetState().IsKeyDown(Keys.Space) || Keyboard.GetState().IsKeyDown(Keys.Up)))
             {
                 verticalSpeed = -jumpStrength;
                 isGrounded = false;
             }
         }
 
+
         private void ApplyGravity()
         {
             if (!isGrounded)
             {
                 verticalSpeed += gravity;
-                Position = new Vector2(Position.X, Position.Y + verticalSpeed);
+                Vector2 newPosition = new Vector2(Position.X, Position.Y + verticalSpeed);
+
+                // Maak een toekomstige hitbox om te controleren op botsingen
+                Rectangle futureHitbox = new Rectangle((int)newPosition.X, (int)newPosition.Y, Hitbox.Width, Hitbox.Height);
+
+                // Check voor botsingen met de kaart
+                foreach (var collider in mapManager.Colliders)
+                {
+                    if (futureHitbox.Intersects(collider))
+                    {
+                        // Als er een botsing is, stel de speler terug naar een correcte positie
+                        verticalSpeed = 0;
+                        isGrounded = true;
+                        Position = new Vector2(Position.X, collider.Top - Hitbox.Height); // Plaats de speler bovenop de tegel
+                        return;
+                    }
+                }
+
+                Position = newPosition; // Geen botsingen, update positie
             }
 
-            
-            if (Position.Y >= 300)
+            // Controleer of de speler op de grond is
+            if (Position.Y >= 300) // Dit is een tijdelijke check, zorg dat je dit vervangt door een correcte waarde
             {
                 Position = new Vector2(Position.X, 300);
                 verticalSpeed = 0;
                 isGrounded = true;
             }
         }
+
+
 
         private void UpdateHitbox()
         {

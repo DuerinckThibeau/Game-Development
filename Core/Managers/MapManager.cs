@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -6,7 +8,7 @@ using TiledSharp;
 
 namespace GameDev.Core.Managers
 {
-    internal class MapManager
+    public class MapManager
     {
         private SpriteBatch spriteBatch;
         TmxMap map;
@@ -14,6 +16,8 @@ namespace GameDev.Core.Managers
         int tilesetTilesWide;
         int tileWidth;
         int tileHeight;
+
+        public List<Rectangle> Colliders { get; private set; }
 
         public MapManager(SpriteBatch _spriteBatch, TmxMap _map, Texture2D _tileset, int _tilesetTilesWide, int _tileWidth, int _tileHeight)
         {
@@ -23,6 +27,34 @@ namespace GameDev.Core.Managers
             tilesetTilesWide = _tilesetTilesWide;
             tileWidth = _tileWidth;
             tileHeight = _tileHeight;
+
+            Colliders = new List<Rectangle>();
+
+            var collisionLayer = map.Layers.FirstOrDefault(layer => layer.Name == "Tiles");
+
+            if (collisionLayer != null)
+            {
+                for (var i = 0; i < collisionLayer.Tiles.Count; i++)
+                {
+                    int gid = collisionLayer.Tiles[i].Gid;
+                    if (gid == 0)
+                    {
+                        continue; 
+                    }
+
+                    int x = (i % map.Width) * map.TileWidth;
+                    int y = (i / map.Width) * map.TileHeight;
+
+                    Colliders.Add(new Rectangle(x, y, map.TileWidth, map.TileHeight));
+                }
+            }
+            else
+            {
+                Console.WriteLine("Collision layer not found!");
+            }
+
+
+
         }
 
         public void Draw(SpriteBatch spriteBatch)

@@ -62,7 +62,7 @@ namespace GameDev
 
         private void InitializeGameObjects()
         {
-            wizard = new Wizard(_runTexture, _idleTexture, new KeyboardReader(), new MovementManager());
+            wizard = new Wizard(_runTexture, _idleTexture, new KeyboardReader(), new MovementManager(), mapManager);
         }
 
         protected override void Update(GameTime gameTime)
