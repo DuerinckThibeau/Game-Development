@@ -22,6 +22,8 @@ namespace GameDev.Core
         public Vector2 Acceleration { get; set; }
         public Vector2 Speed { get; set; }
         public Vector2 Direction { get; private set; }
+        public Rectangle Hitbox { get; private set; }
+
         public IInputReader InputReader { get; set; }
 
         private bool isFacingRight = true;
@@ -60,6 +62,7 @@ namespace GameDev.Core
             Move();
             ApplyGravity();
             currentAnimation.Update(gameTime);
+            UpdateHitbox();
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -68,11 +71,15 @@ namespace GameDev.Core
             SpriteEffects spriteEffects = isFacingRight ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
             Vector2 drawPosition = Position;
-           
-
             spriteBatch.Draw(currentTexture, drawPosition, currentAnimation.currentFrame.sourceRectangle, Color.White, 0f, Vector2.Zero, 1f, spriteEffects, 0f);
+
+            // Hitbox tekenen voor testing
+            Texture2D hitboxTexture = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
+            hitboxTexture.SetData(new[] { Color.White });
+            spriteBatch.Draw(hitboxTexture, Hitbox, Color.Red * 0.5f);
         }
-        
+
+
         private void Move()
         {
             Direction = InputReader.ReadInput();
@@ -118,6 +125,11 @@ namespace GameDev.Core
                 verticalSpeed = 0;
                 isGrounded = true;
             }
+        }
+
+        private void UpdateHitbox()
+        {
+            Hitbox = new Rectangle((int)Position.X, (int)Position.Y, 32, 32);
         }
     }
 }
