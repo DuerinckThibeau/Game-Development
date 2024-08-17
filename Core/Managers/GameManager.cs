@@ -1,97 +1,125 @@
-﻿using Microsoft.Xna.Framework;
+﻿using GameDev.Core.Input;
+using GameDev.Core.Player;
+using GameDev.Core.Screens;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Threading;
 
 namespace GameDev.Core.Managers
 {
     public enum GameState
     {
         StartScreen,
-        Playing,
-        DeathScreen
+        Level1,
+        Level2,
+        Level3,
+        DeathScreen,
+        VictoryScreen
     }
 
-    public class GameManager
+    internal class GameManager
     {
-        public GameState CurrentGameState { get; set; } = GameState.StartScreen;
+        // Singleton pattern
+        private static GameManager Instance;
 
-        private Texture2D _startScreenBackground;
-        private Texture2D _startButtonTexture;
-        private Texture2D _mapBackground;
-        private Texture2D _deathScreenBackground;
-        private Texture2D _exitButtonTexture;
-        private Rectangle _startButtonRectangle;
-        private Rectangle _exitButtonRectangle;
+        private GameState _currentState = GameState.StartScreen;
+        private GameState _nextState;
+        private GameState _currentLevel;
+        public bool changeState = false;
 
-        public void LoadContent(Texture2D startScreenBackground, Texture2D startButtonTexture, Texture2D mapBackground, Texture2D deathScreenBackground, Texture2D exitButtonTexture, GraphicsDevice graphicsDevice)
+        // Screens
+        private StartScreen _startScreen = new StartScreen();
+        private DeathScreen _deathScreen = new DeathScreen();
+        private VictoryScreen _victoryScreen = new VictoryScreen();
+
+        private Level1 _level1;
+        private Level2 _level2;
+        private Level3 _level3;
+
+
+
+        // Player
+        public static Wizard wizard;
+
+        private GameManager() { }
+
+        public static GameManager getInstance()
         {
-            _startScreenBackground = startScreenBackground;
-            _startButtonTexture = startButtonTexture;
-            _mapBackground = mapBackground;
-            _deathScreenBackground = deathScreenBackground;
-            _exitButtonTexture = exitButtonTexture;
-
-            int buttonWidth = _startButtonTexture.Width;
-            int buttonHeight = _startButtonTexture.Height;
-            int buttonX = (graphicsDevice.Viewport.Width - buttonWidth) / 2;
-            int buttonY = (graphicsDevice.Viewport.Height - buttonHeight) / 2 + buttonHeight;
-
-            _startButtonRectangle = new Rectangle(buttonX, buttonY, buttonWidth, buttonHeight);
-            _exitButtonRectangle = new Rectangle(buttonX, buttonY + 300, buttonWidth, buttonHeight);
+            if(Instance == null)
+            {
+                Instance = new GameManager();
+            }
+            return Instance;
         }
 
+        public void UpdateGameState(GameState newState)
+        {
+            if (newState == GameState.Level1)
+            {
+                resetWizard();
+            }
+            _nextState = newState;
+            changeState = true;
+        }
 
         public void Update(GameTime gameTime)
         {
-            MouseState mouseState = Mouse.GetState();
-
-            if (CurrentGameState == GameState.StartScreen)
+            if(changeState = true)
             {
-                if (mouseState.LeftButton == ButtonState.Pressed && _startButtonRectangle.Contains(mouseState.Position))
+                _currentState = _nextState;
+                changeState = false;
+                switch(_currentState)
                 {
-                    StartGame();
+                    case GameState.Level1:
+                        _currentLevel = GameState.Level1;
+                        _level1 = new Level1();
+                        wizard.futureHitbox.X = (int)MapManager.PlayerSpawn.X;
+                        wizard.futureHitbox.Y = (int)MapManager.PlayerSpawn.Y;
+                        break;
                 }
             }
-            else if (CurrentGameState == GameState.DeathScreen)
+            switch (_currentState)
             {
-                if (mouseState.LeftButton == ButtonState.Pressed && _exitButtonRectangle.Contains(mouseState.Position))
-                {
-                    ExitGame();
-                }
+                case GameState.StartScreen:
+                    _startScreen.Update(gameTime);
+                    break;
+                case GameState.Level1:
+                    _level1.Update(gameTime);
+                    break;
 
-                if (Keyboard.GetState().IsKeyDown(Keys.Escape))
-                {
-                    ExitGame();
-                }
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spritebatch)
         {
-            if (CurrentGameState == GameState.StartScreen)
+            switch (_currentState)
             {
-                spriteBatch.Draw(_startScreenBackground, Vector2.Zero, Color.White);
-                spriteBatch.Draw(_startButtonTexture, _startButtonRectangle, Color.White);
-            }
-            else if (CurrentGameState == GameState.Playing)
-            {
-                spriteBatch.Draw(_mapBackground, Vector2.Zero, Color.White);
-            }
-            else if (CurrentGameState == GameState.DeathScreen)
-            {
-                spriteBatch.Draw(_deathScreenBackground, Vector2.Zero, Color.White);
-                spriteBatch.Draw(_exitButtonTexture, _exitButtonRectangle, Color.White);
+                case GameState.StartScreen:
+                    _startScreen.Draw(spritebatch);
+                    break;
+                case GameState.Level1:
+                    _level1.Draw(spritebatch);
+                    break;
             }
         }
 
-        private void StartGame()
+        private void resetWizard()
         {
-            CurrentGameState = GameState.Playing;
+            if(wizard == null)
+            {
+                wizard = new Wizard(ContentLoader.RunTexture, ContentLoader.IdleTexture, ContentLoader.DeathTexture, new KeyboardReader(), new MovementManager());
+            }
+            else
+            {
+                wizard.Health = 3;
+            }
         }
 
-        private void ExitGame()
+        public GameState getCurrentState()
         {
-            System.Environment.Exit(0);
+            return _currentState;
         }
+        
     }
 }

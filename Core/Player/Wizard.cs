@@ -25,7 +25,8 @@ namespace GameDev.Core.Player
         public Vector2 Acceleration { get; set; }
         public Vector2 Speed { get; set; }
         public Vector2 Direction { get; private set; }
-        public Rectangle Hitbox { get; private set; }
+        public Rectangle Hitbox;
+        public Rectangle futureHitbox;
 
         public IInputReader InputReader { get; set; }
 
@@ -36,22 +37,20 @@ namespace GameDev.Core.Player
         private float gravity = 0.5f;
         private float jumpStrength = 12f;
 
-        public int Health { get; private set; }
+        public int Health { get;  set; }
         public bool IsFlashing { get; private set; }
 
         private float flashTime;
         private const float FLASH_INTERVAL = 0.5f;
         private float flashTimer;
 
-        public Wizard(Texture2D runTexture, Texture2D idleTexture, Texture2D deathTexture, IInputReader inputReader, MovementManager movementManager, MapManager mapManager, GameManager gameManager)
+        public Wizard(Texture2D runTexture, Texture2D idleTexture, Texture2D deathTexture, IInputReader inputReader, MovementManager movementManager)
         {
             wizardRunTexture = runTexture;
             wizardIdleTexture = idleTexture;
             wizardDeathTexture = deathTexture;
             InputReader = inputReader;
             playerMovementManager = movementManager;
-            this.mapManager = mapManager;
-            this.gameManager = gameManager;
 
             Acceleration = new Vector2(0.1f, 0.1f);
             Position = new Vector2(1, 1);
@@ -80,7 +79,7 @@ namespace GameDev.Core.Player
             if (Health <= 0)
             {
                 currentAnimation.Update(gameTime);
-                gameManager.CurrentGameState = GameState.DeathScreen;
+                GameManager.getInstance().UpdateGameState(GameState.DeathScreen);
                 return;
             }
 
@@ -138,9 +137,9 @@ namespace GameDev.Core.Player
                 currentAnimation = animations[0];
                 isFacingRight = Direction.X > 0;
 
-                Rectangle futureHitbox = new Rectangle((int)(Position.X + Direction.X * Speed.X), (int)Position.Y, Hitbox.Width, Hitbox.Height);
+                futureHitbox = new Rectangle((int)(Position.X + Direction.X * Speed.X), (int)Position.Y, Hitbox.Width, Hitbox.Height);
 
-                foreach (var collider in mapManager.Colliders)
+                foreach (var collider in MapManager.Colliders)
                 {
                     if (futureHitbox.Intersects(collider))
                     {
@@ -179,7 +178,7 @@ namespace GameDev.Core.Player
 
             bool collisionDetected = false;
 
-            foreach (var collider in mapManager.Colliders)
+            foreach (var collider in MapManager.Colliders)
             {
                 if (futureHitbox.Intersects(collider))
                 {

@@ -4,31 +4,31 @@ using TiledSharp;
 
 namespace GameDev.Core.Managers
 {
-    public class ContentLoader
+    internal class ContentLoader
     {
-        private readonly ContentManager _content;
+        private static ContentManager _content;
 
         // Startscreen
-        public Texture2D BackgroundTexture { get; private set; }
-        public Texture2D StartButtonTexture { get; private set; }
+        public static Texture2D BackgroundTexture;
+        public static Texture2D StartButtonTexture;
 
         // Deathscreen
-        public Texture2D DeathScreenTexture { get; private set; }
-        public Texture2D ExitButtonTexture { get; private set; }
+        public static Texture2D DeathScreenTexture;
+        public static Texture2D ExitButtonTexture;
 
         // Enemy textures
-        public Texture2D OrcTexture { get; private set; }
+        public static Texture2D OrcTexture;
 
         // Player textures
-        public Texture2D HeartTexture { get; private set; }
-        public Texture2D IdleTexture { get; private set; }
-        public Texture2D RunTexture { get; private set; }
-        public Texture2D DeathTexture { get; private set; }
+        public static Texture2D HeartTexture;
+        public static Texture2D IdleTexture;
+        public static Texture2D RunTexture;
+        public static Texture2D DeathTexture;
 
         // Level 1 
-        public TmxMap Level1 { get; private set; }
-        public Texture2D MapBackground { get; private set; }
-        public Texture2D TilesetTexture { get; private set; }
+        public static TmxMap Level1;
+        public static Texture2D MapBackground;
+        public static Texture2D TilesetTexture;
 
 
         public ContentLoader(ContentManager contentManager)
@@ -36,7 +36,7 @@ namespace GameDev.Core.Managers
             _content = contentManager;
         }
 
-        public void LoadContent()
+        public static void LoadContent()
         {
             // Startscreen
             BackgroundTexture = _content.Load<Texture2D>("UI/StartScreen");

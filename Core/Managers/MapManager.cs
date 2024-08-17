@@ -17,18 +17,18 @@ namespace GameDev.Core.Managers
         int tileWidth;
         int tileHeight;
 
-        public List<Rectangle> Colliders { get; private set; }
+        public static Vector2 PlayerSpawn;
+        public static List<Rectangle> Colliders = new();
 
-        public MapManager(SpriteBatch _spriteBatch, TmxMap _map, Texture2D _tileset, int _tilesetTilesWide, int _tileWidth, int _tileHeight)
+        public MapManager(TmxMap _map, Texture2D _tileset)
         {
-            spriteBatch = _spriteBatch;
+            spriteBatch = Game1._spriteBatch;
             map = _map;
             tileset = _tileset;
-            tilesetTilesWide = _tilesetTilesWide;
-            tileWidth = _tileWidth;
-            tileHeight = _tileHeight;
 
-            Colliders = new List<Rectangle>();
+            tileWidth = map.Tilesets[0].TileWidth;
+            tileHeight = map.Tilesets[0].TileHeight;
+            tilesetTilesWide = tileset.Width / tileWidth;
 
             var collisionLayer = map.Layers.FirstOrDefault(layer => layer.Name == "Tiles");
 
@@ -52,9 +52,10 @@ namespace GameDev.Core.Managers
             {
                 Console.WriteLine("Collision layer not found!");
             }
+            /*PlayerSpawn = new Vector2((int)map.ObjectGroups["PlayerSpawn"].Objects["Spawn"].X, (int)map.ObjectGroups["PlayerSpawn"].Objects["Spawn"].Y);*/
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw()
         {
             for (var i = 0; i < map.Layers.Count; i++)
             {
