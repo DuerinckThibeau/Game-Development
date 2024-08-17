@@ -19,6 +19,7 @@ namespace GameDev.Core
 
         MovementManager playerMovementManager;
         private MapManager mapManager;
+        private GameManager gameManager;
 
         public Vector2 Position { get; set; }
         public Vector2 Acceleration { get; set; }
@@ -39,10 +40,10 @@ namespace GameDev.Core
         public bool IsFlashing { get; private set; }
 
         private float flashTime;
-        private float flashInterval = 0.5f;
+        private const float FLASH_INTERVAL = 0.5f;
         private float flashTimer;
 
-        public Wizard(Texture2D runTexture, Texture2D idleTexture, Texture2D deathTexture, IInputReader inputReader, MovementManager movementManager, MapManager mapManager)
+        public Wizard(Texture2D runTexture, Texture2D idleTexture, Texture2D deathTexture, IInputReader inputReader, MovementManager movementManager, MapManager mapManager, GameManager gameManager)
         {
             wizardRunTexture = runTexture;
             wizardIdleTexture = idleTexture;
@@ -50,6 +51,7 @@ namespace GameDev.Core
             InputReader = inputReader;
             playerMovementManager = movementManager;
             this.mapManager = mapManager;
+            this.gameManager = gameManager;
 
             Acceleration = new Vector2(0.1f, 0.1f);
             Position = new Vector2(1, 1);
@@ -78,6 +80,7 @@ namespace GameDev.Core
             if (Health <= 0)
             {
                 currentAnimation.Update(gameTime);
+                gameManager.CurrentGameState = GameState.DeathScreen;
                 return; 
             }
 
@@ -93,8 +96,7 @@ namespace GameDev.Core
             if(Health <= 0)
             {
                 currentTexture = wizardDeathTexture;
-            } else 
-            {
+            } else {
                 currentTexture = currentAnimation == animations[0] ? wizardRunTexture : wizardIdleTexture;
             }
 
@@ -106,7 +108,7 @@ namespace GameDev.Core
 
             if (IsFlashing)
             {
-                if (flashTimer % flashInterval < flashInterval / 2)
+                if (flashTimer % FLASH_INTERVAL < FLASH_INTERVAL / 2)
                 {
                     drawColor = Color.Red; 
                 }

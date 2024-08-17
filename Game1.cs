@@ -23,6 +23,9 @@ namespace GameDev
         private Texture2D _startButtonTexture;
         private Texture2D _heartTexture;
         private Texture2D _mapBackground;
+        private Texture2D _deathScreenTexture;
+        private Texture2D _exitButtonTexture;
+
         private Wizard _wizard;
         private List<Orc> _orcs;
         private Texture2D _orcTexture;
@@ -56,6 +59,8 @@ namespace GameDev
 
             _backgroundTexture = Content.Load<Texture2D>("UI/StartScreen");
             _startButtonTexture = Content.Load<Texture2D>("UI/Startbutton");
+            _deathScreenTexture = Content.Load<Texture2D>("UI/DeathScreen");
+            _exitButtonTexture = Content.Load<Texture2D>("UI/ExitButton");
             _mapBackground = Content.Load<Texture2D>("Tiles/World1");
             _orcTexture = Content.Load<Texture2D>("Enemies/Orc-Idle");
             _heartTexture = Content.Load<Texture2D>("UI/Heart");
@@ -84,12 +89,12 @@ namespace GameDev
                 }
             }
 
-            _gameManager.LoadContent(_backgroundTexture, _startButtonTexture, _mapBackground, GraphicsDevice);
+            _gameManager.LoadContent(_backgroundTexture, _startButtonTexture, _mapBackground, _deathScreenTexture, _exitButtonTexture, GraphicsDevice);
         }
 
         private void InitializeGameObjects()
         {
-            _wizard = new Wizard(_runTexture, _idleTexture, _deathTexture, new KeyboardReader(), new MovementManager(), _mapManager);
+            _wizard = new Wizard(_runTexture, _idleTexture, _deathTexture, new KeyboardReader(), new MovementManager(), _mapManager, _gameManager);
         }
 
         protected override void Update(GameTime gameTime)
@@ -143,6 +148,10 @@ namespace GameDev
                 }
             }
             else if (_gameManager.CurrentGameState == GameState.StartScreen)
+            {
+                _gameManager.Draw(_spriteBatch);
+            }
+            else if (_gameManager.CurrentGameState == GameState.DeathScreen)
             {
                 _gameManager.Draw(_spriteBatch);
             }
