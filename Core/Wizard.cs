@@ -55,7 +55,7 @@ namespace GameDev.Core
                 new Animation() // idle
             };
 
-            animations[0].AddAnimation(6, 64, 32);
+            animations[0].AddAnimation(6, 32, 32);
             animations[1].AddAnimation(4, 32, 32);
             currentAnimation = animations[1];
         }

@@ -55,7 +55,7 @@ namespace GameDev
 
 
             _idleTexture = Content.Load<Texture2D>("Wizard/Idle-Sheet");
-            _runTexture = Content.Load<Texture2D>("Wizard/Run-Sheetv2");
+            _runTexture = Content.Load<Texture2D>("Wizard/Run-Sheet");
 
             InitializeGameObjects();
         }
