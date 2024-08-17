@@ -1,13 +1,12 @@
-﻿using GameDev.Core;
-using GameDev.Core.Enemies;
+﻿using GameDev.Core.Enemies;
 using GameDev.Core.Input;
 using GameDev.Core.Managers;
+using GameDev.Core.Player;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
-using TiledSharp;
 
 namespace GameDev
 {
@@ -15,25 +14,13 @@ namespace GameDev
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-
-        private Texture2D _runTexture;
-        private Texture2D _idleTexture;
-        private Texture2D _deathTexture;
-        private Texture2D _backgroundTexture;
-        private Texture2D _startButtonTexture;
-        private Texture2D _heartTexture;
-        private Texture2D _mapBackground;
-        private Texture2D _deathScreenTexture;
-        private Texture2D _exitButtonTexture;
+        private ContentLoader _contentLoader;
 
         private Wizard _wizard;
         private List<Orc> _orcs;
-        private Texture2D _orcTexture;
         private GameManager _gameManager;
 
-        private TmxMap _map;
         private MapManager _mapManager;
-        private Texture2D _tilesetTexture;
 
         private float _scale;
         private Matrix _transformMatrix;
@@ -44,6 +31,7 @@ namespace GameDev
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
             _gameManager = new GameManager();
+            _contentLoader = new ContentLoader(Content);
         }
 
         protected override void Initialize()
@@ -57,44 +45,32 @@ namespace GameDev
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            _backgroundTexture = Content.Load<Texture2D>("UI/StartScreen");
-            _startButtonTexture = Content.Load<Texture2D>("UI/Startbutton");
-            _deathScreenTexture = Content.Load<Texture2D>("UI/DeathScreen");
-            _exitButtonTexture = Content.Load<Texture2D>("UI/ExitButton");
-            _mapBackground = Content.Load<Texture2D>("Tiles/World1");
-            _orcTexture = Content.Load<Texture2D>("Enemies/Orc-Idle");
-            _heartTexture = Content.Load<Texture2D>("UI/Heart");
+            _contentLoader.LoadContent();
 
-            _map = new TmxMap("Content/Maps/Level_1.tmx");
-            _tilesetTexture = Content.Load<Texture2D>("Tiles/Assets");
-            var tileWidth = _map.Tilesets[0].TileWidth;
-            var tileHeight = _map.Tilesets[0].TileHeight;
-            var tileSetTilesWide = _tilesetTexture.Width / tileWidth;
-            _mapManager = new MapManager(_spriteBatch, _map, _tilesetTexture, tileSetTilesWide, tileWidth, tileHeight);
-
-            _idleTexture = Content.Load<Texture2D>("Wizard/Idle-Sheet");
-            _runTexture = Content.Load<Texture2D>("Wizard/Run-Sheet");
-            _deathTexture = Content.Load<Texture2D>("Wizard/Death-Sheet");
+            var tileWidth = _contentLoader.Level1.Tilesets[0].TileWidth;
+            var tileHeight = _contentLoader.Level1.Tilesets[0].TileHeight;
+            var tileSetTilesWide = _contentLoader.TilesetTexture.Width / tileWidth;
+            _mapManager = new MapManager(_spriteBatch, _contentLoader.Level1, _contentLoader.TilesetTexture, tileSetTilesWide, tileWidth, tileHeight);
 
             InitializeGameObjects();
 
             _orcs = new List<Orc>();
-            foreach (var obj in _map.ObjectGroups["Orc"].Objects)
+            foreach (var obj in _contentLoader.Level1.ObjectGroups["Orc"].Objects)
             {
                 if (obj.Name == "OrcSpawn")
                 {
                     Vector2 spawnPosition = new Vector2((float)obj.X, (float)obj.Y);
-                    Orc newOrc = new Orc(_orcTexture, spawnPosition, 1f);
+                    Orc newOrc = new Orc(_contentLoader.OrcTexture, spawnPosition, 1f);
                     _orcs.Add(newOrc);
                 }
             }
 
-            _gameManager.LoadContent(_backgroundTexture, _startButtonTexture, _mapBackground, _deathScreenTexture, _exitButtonTexture, GraphicsDevice);
+            _gameManager.LoadContent(_contentLoader.BackgroundTexture, _contentLoader.StartButtonTexture, _contentLoader.MapBackground, _contentLoader.DeathScreenTexture, _contentLoader.ExitButtonTexture, GraphicsDevice);
         }
 
         private void InitializeGameObjects()
         {
-            _wizard = new Wizard(_runTexture, _idleTexture, _deathTexture, new KeyboardReader(), new MovementManager(), _mapManager, _gameManager);
+            _wizard = new Wizard(_contentLoader.RunTexture, _contentLoader.IdleTexture, _contentLoader.DeathTexture, new KeyboardReader(), new MovementManager(), _mapManager, _gameManager);
         }
 
         protected override void Update(GameTime gameTime)
@@ -117,14 +93,13 @@ namespace GameDev
                     if (_wizard.Hitbox.Intersects(orc.Hitbox) && !_wizard.IsFlashing)
                     {
                         _wizard.TakeDamage();
-                        break; 
+                        break;
                     }
                 }
             }
 
             base.Update(gameTime);
         }
-
 
         protected override void Draw(GameTime gameTime)
         {
@@ -134,7 +109,7 @@ namespace GameDev
 
             if (_gameManager.CurrentGameState == GameState.Playing)
             {
-                _spriteBatch.Draw(_mapBackground, Vector2.Zero, Color.White);
+                _spriteBatch.Draw(_contentLoader.MapBackground, Vector2.Zero, Color.White);
                 _mapManager.Draw(_spriteBatch);
                 _wizard.Draw(_spriteBatch);
                 foreach (var orc in _orcs)
@@ -144,7 +119,7 @@ namespace GameDev
 
                 for (int i = 0; i < _wizard.Health; i++)
                 {
-                    _spriteBatch.Draw(_heartTexture, new Vector2(10 + i * 40, 10), Color.White);
+                    _spriteBatch.Draw(_contentLoader.HeartTexture, new Vector2(10 + i * 40, 10), Color.White);
                 }
             }
             else if (_gameManager.CurrentGameState == GameState.StartScreen)
