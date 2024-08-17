@@ -12,6 +12,8 @@ namespace GameDev.Core
     {
         Texture2D wizardRunTexture;
         Texture2D wizardIdleTexture;
+        Texture2D wizardDeathTexture;
+        Texture2D currentTexture;
         Animation currentAnimation;
         Animation[] animations;
 
@@ -24,7 +26,6 @@ namespace GameDev.Core
         public Vector2 Direction { get; private set; }
         public Rectangle Hitbox { get; private set; }
 
-
         public IInputReader InputReader { get; set; }
 
         private bool isFacingRight = true;
@@ -35,16 +36,17 @@ namespace GameDev.Core
         private float jumpStrength = 12f;
 
         public int Health { get; private set; }
-        public bool isFlashing;
-       
+        public bool IsFlashing { get; private set; }
+
         private float flashTime;
-        private float flashInterval = 0.5f; 
+        private float flashInterval = 0.5f;
         private float flashTimer;
 
-        public Wizard(Texture2D runTexture, Texture2D idleTexture, IInputReader inputReader, MovementManager movementManager, MapManager mapManager)
+        public Wizard(Texture2D runTexture, Texture2D idleTexture, Texture2D deathTexture, IInputReader inputReader, MovementManager movementManager, MapManager mapManager)
         {
             wizardRunTexture = runTexture;
             wizardIdleTexture = idleTexture;
+            wizardDeathTexture = deathTexture;
             InputReader = inputReader;
             playerMovementManager = movementManager;
             this.mapManager = mapManager;
@@ -56,21 +58,29 @@ namespace GameDev.Core
             animations = new Animation[]
             {
                 new Animation(), // run
-                new Animation() // idle
+                new Animation(), // idle
+                new Animation()  // death
             };
 
             animations[0].AddAnimation(6, 32, 32);
             animations[1].AddAnimation(4, 32, 32);
+            animations[2].AddAnimation(6, 32, 32);
             currentAnimation = animations[1];
 
             Health = 3;
-            isFlashing = false;
+            IsFlashing = false;
             flashTime = 0f;
             flashTimer = 0f;
         }
 
         public void Update(GameTime gameTime)
         {
+            if (Health <= 0)
+            {
+                currentAnimation.Update(gameTime);
+                return; 
+            }
+
             Move();
             ApplyGravity();
             UpdateFlashing(gameTime);
@@ -80,17 +90,25 @@ namespace GameDev.Core
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            Texture2D currentTexture = currentAnimation == animations[0] ? wizardRunTexture : wizardIdleTexture;
-            SpriteEffects spriteEffects = isFacingRight ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            if(Health <= 0)
+            {
+                currentTexture = wizardDeathTexture;
+            } else 
+            {
+                currentTexture = currentAnimation == animations[0] ? wizardRunTexture : wizardIdleTexture;
+            }
 
+            
+
+            SpriteEffects spriteEffects = isFacingRight ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Vector2 drawPosition = Position;
             Color drawColor = Color.White;
 
-            if (isFlashing)
+            if (IsFlashing)
             {
                 if (flashTimer % flashInterval < flashInterval / 2)
                 {
-                    drawColor = Color.Black;
+                    drawColor = Color.Red; 
                 }
                 else
                 {
@@ -103,6 +121,8 @@ namespace GameDev.Core
 
         private void Move()
         {
+            if (Health <= 0) return; 
+
             Vector2 previousPosition = Position;
 
             Direction = InputReader.ReadInput();
@@ -189,28 +209,27 @@ namespace GameDev.Core
 
         public void TakeDamage()
         {
-            if (isFlashing) return;
+            if (IsFlashing || Health <= 0) return;
 
             Health--;
-            isFlashing = true;
-            flashTime = 3f; 
+            IsFlashing = true;
+            flashTime = 3f;
             flashTimer = 0f;
+
         }
 
         private void UpdateFlashing(GameTime gameTime)
         {
-            if (isFlashing)
+            if (IsFlashing)
             {
                 flashTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                 if (flashTimer >= flashTime)
                 {
-                    isFlashing = false;
+                    IsFlashing = false;
                     flashTimer = 0f;
                 }
             }
         }
-
-        
     }
 }

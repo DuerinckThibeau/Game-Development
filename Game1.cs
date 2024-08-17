@@ -18,6 +18,7 @@ namespace GameDev
 
         private Texture2D _runTexture;
         private Texture2D _idleTexture;
+        private Texture2D _deathTexture;
         private Texture2D _backgroundTexture;
         private Texture2D _startButtonTexture;
         private Texture2D _heartTexture;
@@ -68,6 +69,7 @@ namespace GameDev
 
             _idleTexture = Content.Load<Texture2D>("Wizard/Idle-Sheet");
             _runTexture = Content.Load<Texture2D>("Wizard/Run-Sheet");
+            _deathTexture = Content.Load<Texture2D>("Wizard/Death-Sheet");
 
             InitializeGameObjects();
 
@@ -87,7 +89,7 @@ namespace GameDev
 
         private void InitializeGameObjects()
         {
-            _wizard = new Wizard(_runTexture, _idleTexture, new KeyboardReader(), new MovementManager(), _mapManager);
+            _wizard = new Wizard(_runTexture, _idleTexture, _deathTexture, new KeyboardReader(), new MovementManager(), _mapManager);
         }
 
         protected override void Update(GameTime gameTime)
@@ -107,7 +109,7 @@ namespace GameDev
 
                 foreach (var orc in _orcs)
                 {
-                    if (_wizard.Hitbox.Intersects(orc.Hitbox) && !_wizard.isFlashing)
+                    if (_wizard.Hitbox.Intersects(orc.Hitbox) && !_wizard.IsFlashing)
                     {
                         _wizard.TakeDamage();
                         break; 
