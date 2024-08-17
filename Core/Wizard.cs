@@ -24,6 +24,7 @@ namespace GameDev.Core
         public Vector2 Direction { get; private set; }
         public Rectangle Hitbox { get; private set; }
 
+
         public IInputReader InputReader { get; set; }
 
         private bool isFacingRight = true;
@@ -32,6 +33,13 @@ namespace GameDev.Core
         private bool isGrounded;
         private float gravity = 0.5f;
         private float jumpStrength = 12f;
+
+        public int Health { get; private set; }
+        public bool isFlashing;
+       
+        private float flashTime;
+        private float flashInterval = 0.5f; 
+        private float flashTimer;
 
         public Wizard(Texture2D runTexture, Texture2D idleTexture, IInputReader inputReader, MovementManager movementManager, MapManager mapManager)
         {
@@ -54,13 +62,18 @@ namespace GameDev.Core
             animations[0].AddAnimation(6, 32, 32);
             animations[1].AddAnimation(4, 32, 32);
             currentAnimation = animations[1];
-        }
 
+            Health = 3;
+            isFlashing = false;
+            flashTime = 0f;
+            flashTimer = 0f;
+        }
 
         public void Update(GameTime gameTime)
         {
             Move();
             ApplyGravity();
+            UpdateFlashing(gameTime);
             currentAnimation.Update(gameTime);
             UpdateHitbox();
         }
@@ -71,20 +84,22 @@ namespace GameDev.Core
             SpriteEffects spriteEffects = isFacingRight ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
             Vector2 drawPosition = Position;
-            spriteBatch.Draw(currentTexture, drawPosition, currentAnimation.currentFrame.sourceRectangle, Color.White, 0f, Vector2.Zero, 1f, spriteEffects, 0f);
+            Color drawColor = Color.White;
 
-            /*// Hitbox tekenen voor testing
-            Texture2D hitboxTexture = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
-            hitboxTexture.SetData(new[] { Color.White });
-            spriteBatch.Draw(hitboxTexture, Hitbox, Color.Red * 0.5f);
-
-            // Tiles (hitbox) tekenen voor testing
-            foreach (var collider in mapManager.Colliders)
+            if (isFlashing)
             {
-                spriteBatch.Draw(hitboxTexture, collider, Color.Green * 0.5f);
-            }*/
-        }
+                if (flashTimer % flashInterval < flashInterval / 2)
+                {
+                    drawColor = Color.Black;
+                }
+                else
+                {
+                    drawColor = Color.White; 
+                }
+            }
 
+            spriteBatch.Draw(currentTexture, drawPosition, currentAnimation.currentFrame.sourceRectangle, drawColor, 0f, Vector2.Zero, 1f, spriteEffects, 0f);
+        }
 
         private void Move()
         {
@@ -166,9 +181,36 @@ namespace GameDev.Core
                 isGrounded = false;
             }
         }
+
         private void UpdateHitbox()
         {
             Hitbox = new Rectangle((int)Position.X, (int)Position.Y, 25, 32);
         }
+
+        public void TakeDamage()
+        {
+            if (isFlashing) return;
+
+            Health--;
+            isFlashing = true;
+            flashTime = 3f; 
+            flashTimer = 0f;
+        }
+
+        private void UpdateFlashing(GameTime gameTime)
+        {
+            if (isFlashing)
+            {
+                flashTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                if (flashTimer >= flashTime)
+                {
+                    isFlashing = false;
+                    flashTimer = 0f;
+                }
+            }
+        }
+
+        
     }
 }

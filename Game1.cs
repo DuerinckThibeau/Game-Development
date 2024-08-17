@@ -20,6 +20,7 @@ namespace GameDev
         private Texture2D _idleTexture;
         private Texture2D _backgroundTexture;
         private Texture2D _startButtonTexture;
+        private Texture2D _heartTexture;
         private Texture2D _mapBackground;
         private Wizard _wizard;
         private List<Orc> _orcs;
@@ -56,6 +57,7 @@ namespace GameDev
             _startButtonTexture = Content.Load<Texture2D>("UI/Startbutton");
             _mapBackground = Content.Load<Texture2D>("Tiles/World1");
             _orcTexture = Content.Load<Texture2D>("Enemies/Orc-Idle");
+            _heartTexture = Content.Load<Texture2D>("UI/Heart");
 
             _map = new TmxMap("Content/Maps/Level_1.tmx");
             _tilesetTexture = Content.Load<Texture2D>("Tiles/Assets");
@@ -98,15 +100,24 @@ namespace GameDev
             if (_gameManager.CurrentGameState == GameState.Playing)
             {
                 _wizard.Update(gameTime);
-
                 foreach (var orc in _orcs)
                 {
                     orc.Update(gameTime);
+                }
+
+                foreach (var orc in _orcs)
+                {
+                    if (_wizard.Hitbox.Intersects(orc.Hitbox) && !_wizard.isFlashing)
+                    {
+                        _wizard.TakeDamage();
+                        break; 
+                    }
                 }
             }
 
             base.Update(gameTime);
         }
+
 
         protected override void Draw(GameTime gameTime)
         {
@@ -119,10 +130,14 @@ namespace GameDev
                 _spriteBatch.Draw(_mapBackground, Vector2.Zero, Color.White);
                 _mapManager.Draw(_spriteBatch);
                 _wizard.Draw(_spriteBatch);
-
                 foreach (var orc in _orcs)
                 {
                     orc.Draw(_spriteBatch);
+                }
+
+                for (int i = 0; i < _wizard.Health; i++)
+                {
+                    _spriteBatch.Draw(_heartTexture, new Vector2(10 + i * 40, 10), Color.White);
                 }
             }
             else if (_gameManager.CurrentGameState == GameState.StartScreen)
