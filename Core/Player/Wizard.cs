@@ -6,7 +6,7 @@ using GameDev.Core.Managers;
 using Microsoft.Xna.Framework.Input;
 using System;
 
-namespace GameDev.Core
+namespace GameDev.Core.Player
 {
     public class Wizard : IGameObject, IMovable
     {
@@ -81,7 +81,7 @@ namespace GameDev.Core
             {
                 currentAnimation.Update(gameTime);
                 gameManager.CurrentGameState = GameState.DeathScreen;
-                return; 
+                return;
             }
 
             Move();
@@ -93,14 +93,16 @@ namespace GameDev.Core
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            if(Health <= 0)
+            if (Health <= 0)
             {
                 currentTexture = wizardDeathTexture;
-            } else {
+            }
+            else
+            {
                 currentTexture = currentAnimation == animations[0] ? wizardRunTexture : wizardIdleTexture;
             }
 
-            
+
 
             SpriteEffects spriteEffects = isFacingRight ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Vector2 drawPosition = Position;
@@ -110,11 +112,11 @@ namespace GameDev.Core
             {
                 if (flashTimer % FLASH_INTERVAL < FLASH_INTERVAL / 2)
                 {
-                    drawColor = Color.Red; 
+                    drawColor = Color.Red;
                 }
                 else
                 {
-                    drawColor = Color.White; 
+                    drawColor = Color.White;
                 }
             }
 
@@ -123,7 +125,7 @@ namespace GameDev.Core
 
         private void Move()
         {
-            if (Health <= 0) return; 
+            if (Health <= 0) return;
 
             Vector2 previousPosition = Position;
 
