@@ -58,7 +58,7 @@ namespace GameDev
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             _spriteBatch.Begin(transformMatrix: GameManager.getInstance().getCurrentState() == GameState.Level1 ? _transformMatrix : Matrix.Identity);
             GameManager.getInstance().Draw(_spriteBatch);

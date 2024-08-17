@@ -151,7 +151,11 @@ namespace GameDev.Core.Player
 
                 if (!collisionDetected)
                 {
-                    Position = new Vector2(Position.X + Direction.X * Speed.X, Position.Y);
+                    /*Position = new Vector2(Position.X + Direction.X * Speed.X, Position.Y);*/
+                    Position = new Vector2(
+                        Math.Clamp(Position.X + Direction.X * Speed.X, 0, 800 - Hitbox.Width),
+                        Position.Y
+                    );
                 }
             }
             else
