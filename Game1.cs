@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Reflection.Metadata;
 using TiledSharp;
 
 namespace GameDev
@@ -16,17 +17,14 @@ namespace GameDev
 
         private Texture2D _runTexture;
         private Texture2D _idleTexture;
-        Wizard wizard;
+        private Wizard _wizard;
 
         private TmxMap _map;
-        private MapManager mapManager;
+        private MapManager _mapManager;
         private Texture2D _tilesetTexture;
 
-        private int _tileWidth;
-        private int _tileHeight;
-        private int _tilesetTilesWide;
-        private int _tilesetTilesHeight;
-
+        private float _scale;
+        private Matrix _transformMatrix;
 
         public Game1()
         {
@@ -42,55 +40,65 @@ namespace GameDev
 
         protected override void LoadContent()
         {
-            SetFullScreen();
 
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
+        SetFullScreen();
 
-            _map = new TmxMap("Content/Maps/Level_1.tmx");
-            var tileset = Content.Load<Texture2D>("Tiles/Assets");
-            var tileWidth = _map.Tilesets[0].TileWidth;
-            var tileHeight = _map.Tilesets[0].TileHeight;
-            var TileSetTilesWide = tileset.Width / tileWidth;
-            mapManager = new MapManager(_spriteBatch, _map, tileset, TileSetTilesWide, tileWidth, tileHeight);
+        _spriteBatch = new SpriteBatch(GraphicsDevice);
 
+        _map = new TmxMap("Content/Maps/Level_1.tmx");
+        _tilesetTexture = Content.Load<Texture2D>("Tiles/Assets");
+        var tileWidth = _map.Tilesets[0].TileWidth;
+        var tileHeight = _map.Tilesets[0].TileHeight;
+        var tileSetTilesWide = _tilesetTexture.Width / tileWidth;
+        _mapManager = new MapManager(_spriteBatch, _map, _tilesetTexture, tileSetTilesWide, tileWidth, tileHeight);
 
-            _idleTexture = Content.Load<Texture2D>("Wizard/Idle-Sheet");
-            _runTexture = Content.Load<Texture2D>("Wizard/Run-Sheet");
+        _idleTexture = Content.Load<Texture2D>("Wizard/Idle-Sheet");
+        _runTexture = Content.Load<Texture2D>("Wizard/Run-Sheet");
 
-            InitializeGameObjects();
+        InitializeGameObjects();
         }
 
         private void InitializeGameObjects()
         {
-            wizard = new Wizard(_runTexture, _idleTexture, new KeyboardReader(), new MovementManager(), mapManager);
+        _wizard = new Wizard(_runTexture, _idleTexture, new KeyboardReader(), new MovementManager(), _mapManager);
         }
 
         protected override void Update(GameTime gameTime)
-        {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            {
+        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            Exit();
 
-            wizard.Update(gameTime);
-            base.Update(gameTime);
+        _wizard.Update(gameTime);
+        base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
-        {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-            _spriteBatch.Begin();
-            mapManager.Draw(_spriteBatch);
-            wizard.Draw(_spriteBatch);
-            _spriteBatch.End();
+            {
+        GraphicsDevice.Clear(Color.CornflowerBlue);
+        _spriteBatch.Begin(transformMatrix: _transformMatrix);
+        _mapManager.Draw(_spriteBatch);
+        _wizard.Draw(_spriteBatch);
+        _spriteBatch.End();
 
-            base.Draw(gameTime);
+        base.Draw(gameTime);
         }
 
         private void SetFullScreen()
         {
-            _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-            _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-            Window.IsBorderless = true;
-            _graphics.ApplyChanges();
+        _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+        _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+        _graphics.IsFullScreen = true;
+        _graphics.ApplyChanges();
+
+        
+        int screenHeight = GraphicsDevice.Viewport.Height;
+        int screenWidth = GraphicsDevice.Viewport.Width;
+
+        int mapWidth = 800;
+        int mapHeight = 480;
+
+        _scale = Math.Min(screenWidth / (float)mapWidth, screenHeight / (float)mapHeight);
+        _transformMatrix = Matrix.CreateScale(_scale);
         }
     }
 }
