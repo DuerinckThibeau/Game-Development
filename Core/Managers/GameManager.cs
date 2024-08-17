@@ -84,6 +84,9 @@ namespace GameDev.Core.Managers
                 case GameState.StartScreen:
                     _startScreen.Update(gameTime);
                     break;
+                case GameState.DeathScreen:
+                    _deathScreen.Update(gameTime);
+                    break;
                 case GameState.Level1:
                     _level1.Update(gameTime);
                     break;
@@ -97,6 +100,9 @@ namespace GameDev.Core.Managers
             {
                 case GameState.StartScreen:
                     _startScreen.Draw(spritebatch);
+                    break;
+                case GameState.DeathScreen:
+                    _deathScreen.Draw(spritebatch);
                     break;
                 case GameState.Level1:
                     _level1.Draw(spritebatch);
