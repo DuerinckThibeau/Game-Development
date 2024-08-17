@@ -17,6 +17,7 @@ namespace GameDev
 
         private Texture2D _runTexture;
         private Texture2D _idleTexture;
+        private Texture2D _backgroundTexture;
         private Wizard _wizard;
 
         private TmxMap _map;
@@ -45,6 +46,7 @@ namespace GameDev
 
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
+        _backgroundTexture = Content.Load<Texture2D>("Tiles/World1");
         _map = new TmxMap("Content/Maps/Level_1.tmx");
         _tilesetTexture = Content.Load<Texture2D>("Tiles/Assets");
         var tileWidth = _map.Tilesets[0].TileWidth;
@@ -64,7 +66,7 @@ namespace GameDev
         }
 
         protected override void Update(GameTime gameTime)
-            {
+        {
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
@@ -73,9 +75,10 @@ namespace GameDev
         }
 
         protected override void Draw(GameTime gameTime)
-            {
+        {
         GraphicsDevice.Clear(Color.CornflowerBlue);
         _spriteBatch.Begin(transformMatrix: _transformMatrix);
+        _spriteBatch.Draw(_backgroundTexture, Vector2.Zero, Color.White);
         _mapManager.Draw(_spriteBatch);
         _wizard.Draw(_spriteBatch);
         _spriteBatch.End();
