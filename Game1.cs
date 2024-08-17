@@ -1,10 +1,12 @@
 ﻿using GameDev.Core;
+using GameDev.Core.Enemies;
 using GameDev.Core.Input;
 using GameDev.Core.Managers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 using TiledSharp;
 
 namespace GameDev
@@ -16,10 +18,12 @@ namespace GameDev
 
         private Texture2D _runTexture;
         private Texture2D _idleTexture;
-        private Texture2D _backgroundTexture; 
+        private Texture2D _backgroundTexture;
         private Texture2D _startButtonTexture;
-        private Texture2D _mapBackground; 
+        private Texture2D _mapBackground;
         private Wizard _wizard;
+        private List<Orc> _orcs;
+        private Texture2D _orcTexture;
         private GameManager _gameManager;
 
         private TmxMap _map;
@@ -51,6 +55,7 @@ namespace GameDev
             _backgroundTexture = Content.Load<Texture2D>("UI/StartScreen");
             _startButtonTexture = Content.Load<Texture2D>("UI/Startbutton");
             _mapBackground = Content.Load<Texture2D>("Tiles/World1");
+            _orcTexture = Content.Load<Texture2D>("Enemies/Orc-Idle");
 
             _map = new TmxMap("Content/Maps/Level_1.tmx");
             _tilesetTexture = Content.Load<Texture2D>("Tiles/Assets");
@@ -63,6 +68,17 @@ namespace GameDev
             _runTexture = Content.Load<Texture2D>("Wizard/Run-Sheet");
 
             InitializeGameObjects();
+
+            _orcs = new List<Orc>();
+            foreach (var obj in _map.ObjectGroups["Orc"].Objects)
+            {
+                if (obj.Name == "OrcSpawn")
+                {
+                    Vector2 spawnPosition = new Vector2((float)obj.X, (float)obj.Y);
+                    Orc newOrc = new Orc(_orcTexture, spawnPosition, 1f);
+                    _orcs.Add(newOrc);
+                }
+            }
 
             _gameManager.LoadContent(_backgroundTexture, _startButtonTexture, _mapBackground, GraphicsDevice);
         }
@@ -82,6 +98,11 @@ namespace GameDev
             if (_gameManager.CurrentGameState == GameState.Playing)
             {
                 _wizard.Update(gameTime);
+
+                foreach (var orc in _orcs)
+                {
+                    orc.Update(gameTime);
+                }
             }
 
             base.Update(gameTime);
@@ -93,12 +114,20 @@ namespace GameDev
 
             _spriteBatch.Begin(transformMatrix: _gameManager.CurrentGameState == GameState.Playing ? _transformMatrix : Matrix.Identity);
 
-            _gameManager.Draw(_spriteBatch);
-
             if (_gameManager.CurrentGameState == GameState.Playing)
             {
+                _spriteBatch.Draw(_mapBackground, Vector2.Zero, Color.White);
                 _mapManager.Draw(_spriteBatch);
                 _wizard.Draw(_spriteBatch);
+
+                foreach (var orc in _orcs)
+                {
+                    orc.Draw(_spriteBatch);
+                }
+            }
+            else if (_gameManager.CurrentGameState == GameState.StartScreen)
+            {
+                _gameManager.Draw(_spriteBatch);
             }
 
             _spriteBatch.End();

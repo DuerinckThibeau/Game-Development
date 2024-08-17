@@ -12,8 +12,6 @@ namespace GameDev.Core
     {
         Texture2D wizardRunTexture;
         Texture2D wizardIdleTexture;
-        Animation runAnimation;
-        Animation idleAnimation;
         Animation currentAnimation;
         Animation[] animations;
 
@@ -29,8 +27,6 @@ namespace GameDev.Core
         public IInputReader InputReader { get; set; }
 
         private bool isFacingRight = true;
-        private float runAnimationHeight = 32f;
-        private float idleAnimationHeight = 32f;
 
         private float verticalSpeed;
         private bool isGrounded;
@@ -77,7 +73,7 @@ namespace GameDev.Core
             Vector2 drawPosition = Position;
             spriteBatch.Draw(currentTexture, drawPosition, currentAnimation.currentFrame.sourceRectangle, Color.White, 0f, Vector2.Zero, 1f, spriteEffects, 0f);
 
-            // Hitbox tekenen voor testing
+            /*// Hitbox tekenen voor testing
             Texture2D hitboxTexture = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
             hitboxTexture.SetData(new[] { Color.White });
             spriteBatch.Draw(hitboxTexture, Hitbox, Color.Red * 0.5f);
@@ -86,7 +82,7 @@ namespace GameDev.Core
             foreach (var collider in mapManager.Colliders)
             {
                 spriteBatch.Draw(hitboxTexture, collider, Color.Green * 0.5f);
-            }
+            }*/
         }
 
 
