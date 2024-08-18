@@ -18,6 +18,7 @@ namespace GameDev.Core.Managers
 
         // Enemy textures
         public static Texture2D OrcTexture;
+        public static Texture2D SnakeTexture;
 
         // Player textures
         public static Texture2D HeartTexture;
@@ -52,6 +53,7 @@ namespace GameDev.Core.Managers
 
             // Enemy textures
             OrcTexture = _content.Load<Texture2D>("Enemies/Orc-Idle");
+            SnakeTexture = _content.Load<Texture2D>("Enemies/Snake-Run");
 
             // Player
             HeartTexture = _content.Load<Texture2D>("UI/Heart");

@@ -25,6 +25,18 @@
 /processorParam:TextureFormat=Color
 /build:Enemies/Orc-Idle.png
 
+#begin Enemies/Snake-Run.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Enemies/Snake-Run.png
+
 #begin Maps/Level_1.tmx
 /copy:Maps/Level_1.tmx
 
