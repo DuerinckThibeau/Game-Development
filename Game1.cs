@@ -60,7 +60,7 @@ namespace GameDev
         {
             GraphicsDevice.Clear(Color.Black);
 
-            _spriteBatch.Begin(transformMatrix: GameManager.getInstance().getCurrentState() == GameState.Level1 || GameManager.getInstance().getCurrentState() == GameState.Level2 || GameManager.getInstance().getCurrentState() == GameState.Level3 ? _transformMatrix : Matrix.Identity);
+            _spriteBatch.Begin(transformMatrix: GameManager.getInstance().getCurrentState() == GameState.Level1 || GameManager.getInstance().getCurrentState() == GameState.Level2 ? _transformMatrix : Matrix.Identity);
             GameManager.getInstance().Draw(_spriteBatch);
             _spriteBatch.End();
 

@@ -4,6 +4,7 @@ using GameDev.Core.Screens;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Threading;
 
 namespace GameDev.Core.Managers
@@ -35,9 +36,6 @@ namespace GameDev.Core.Managers
 
         private Level1 _level1;
         private Level2 _level2;
-        private Level3 _level3;
-
-
 
         // Player
         public static Wizard wizard;
@@ -83,7 +81,6 @@ namespace GameDev.Core.Managers
                         wizard.Hitbox.X = (int)MapManager.PlayerSpawn.X;
                         wizard.Hitbox.Y = (int)MapManager.PlayerSpawn.Y;
                         break;
-
                 }
             }
             switch (_currentState)
@@ -93,6 +90,9 @@ namespace GameDev.Core.Managers
                     break;
                 case GameState.DeathScreen:
                     _deathScreen.Update(gameTime);
+                    break;
+                case GameState.VictoryScreen:
+                    _victoryScreen.Update(gameTime);
                     break;
                 case GameState.Level1:
                     _level1.Update(gameTime);
@@ -113,6 +113,9 @@ namespace GameDev.Core.Managers
                     break;
                 case GameState.DeathScreen:
                     _deathScreen.Draw(spritebatch);
+                    break;
+                case GameState.VictoryScreen:
+                    _victoryScreen.Draw(spritebatch);
                     break;
                 case GameState.Level1:
                     _level1.Draw(spritebatch);

@@ -16,6 +16,9 @@ namespace GameDev.Core.Managers
         public static Texture2D DeathScreenTexture;
         public static Texture2D ExitButtonTexture;
 
+        // Victoryscreen
+        public static Texture2D VictoryScreenTexture;
+
         // Enemy textures
         public static Texture2D OrcTexture;
         public static Texture2D SnakeTexture;
@@ -50,6 +53,9 @@ namespace GameDev.Core.Managers
             // Deathscreen
             DeathScreenTexture = _content.Load<Texture2D>("UI/DeathScreen");
             ExitButtonTexture = _content.Load<Texture2D>("UI/ExitButton");
+
+            // Victoryscreen
+            VictoryScreenTexture = _content.Load<Texture2D>("UI/VictoryScreen");
 
             // Enemy textures
             OrcTexture = _content.Load<Texture2D>("Enemies/Orc-Idle");

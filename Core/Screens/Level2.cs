@@ -53,7 +53,7 @@ namespace GameDev.Core.Screens
 
             if (MapManager.CheckNextLevelTrigger(GameManager.wizard.Hitbox))
             {
-                GameManager.getInstance().UpdateGameState(GameState.Level3);
+                GameManager.getInstance().UpdateGameState(GameState.VictoryScreen);
             }
 
         }
