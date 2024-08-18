@@ -33,8 +33,8 @@ namespace GameDev.Core.Managers
             tilesetTilesWide = tileset.Width / tileWidth;
 
             // TESTING
-            rectangleTexture = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
-            rectangleTexture.SetData(new[] { Color.White });
+            /*rectangleTexture = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
+            rectangleTexture.SetData(new[] { Color.White });*/
 
             PlayerSpawn = new Vector2((int)map.ObjectGroups["Spawn"].Objects["Spawn"].X, (int)map.ObjectGroups["Spawn"].Objects["Spawn"].Y);
 
@@ -90,13 +90,13 @@ namespace GameDev.Core.Managers
             }
 
             // TESTING
-            foreach (var collider in Colliders)
+            /*foreach (var collider in Colliders)
             {
                 spriteBatch.Draw(rectangleTexture, collider, Color.Green * 0.5f);
-            }
+            }*/
 
             // TESTING
-            spriteBatch.Draw(rectangleTexture, nextLevelTrigger, Color.Red * 0.5f);
+            /*spriteBatch.Draw(rectangleTexture, nextLevelTrigger, Color.Red * 0.5f);*/
         }
 
         public static bool CheckNextLevelTrigger(Rectangle playerHitbox)

@@ -76,8 +76,10 @@ namespace GameDev.Core.Player
             flashTime = 0f;
             flashTimer = 0f;
 
-            hitboxTexture = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
-            hitboxTexture.SetData(new[] { Color.White });
+
+            // TESTING
+            /*hitboxTexture = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
+            hitboxTexture.SetData(new[] { Color.White });*/
         }
 
         public void Update(GameTime gameTime)
@@ -125,8 +127,8 @@ namespace GameDev.Core.Player
 
             spriteBatch.Draw(currentTexture, drawPosition, currentAnimation.currentFrame.sourceRectangle, drawColor, 0f, Vector2.Zero, 1f, spriteEffects, 0f);
 
-            // Teken de hitbox
-            spriteBatch.Draw(hitboxTexture, Hitbox, Color.Red * 0.5f);
+            // TESTING
+            /*spriteBatch.Draw(hitboxTexture, Hitbox, Color.Red * 0.5f);*/
         }
 
         private void Move()
