@@ -11,6 +11,14 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Content\NewFolder1\**" />
+    <Compile Remove="Content\NewFolder\**" />
+    <EmbeddedResource Remove="Content\NewFolder1\**" />
+    <EmbeddedResource Remove="Content\NewFolder\**" />
+    <None Remove="Content\NewFolder1\**" />
+    <None Remove="Content\NewFolder\**" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="Icon.ico" />
     <None Remove="Icon.bmp" />
   </ItemGroup>
@@ -23,10 +31,6 @@
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
     <PackageReference Include="TiledCS" Version="3.3.3" />
     <PackageReference Include="TiledSharp" Version="1.0.1" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Content\NewFolder1\" />
-    <Folder Include="Content\NewFolder\" />
   </ItemGroup>
   <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
     <Message Text="Restoring dotnet tools" Importance="High" />

@@ -14,12 +14,14 @@ namespace GameDev.Core.Player
         Texture2D wizardIdleTexture;
         Texture2D wizardDeathTexture;
         Texture2D currentTexture;
+        Texture2D hitboxTexture;
         Animation currentAnimation;
         Animation[] animations;
 
         MovementManager playerMovementManager;
         private MapManager mapManager;
         private GameManager gameManager;
+        private SpriteBatch spriteBatch;
 
         public Vector2 Position { get; set; }
         public Vector2 Acceleration { get; set; }
@@ -37,7 +39,7 @@ namespace GameDev.Core.Player
         private float gravity = 0.5f;
         private float jumpStrength = 12f;
 
-        public int Health { get;  set; }
+        public int Health { get; set; }
         public bool IsFlashing { get; private set; }
 
         private float flashTime;
@@ -46,6 +48,7 @@ namespace GameDev.Core.Player
 
         public Wizard(Texture2D runTexture, Texture2D idleTexture, Texture2D deathTexture, IInputReader inputReader, MovementManager movementManager)
         {
+            spriteBatch = Game1._spriteBatch;
             wizardRunTexture = runTexture;
             wizardIdleTexture = idleTexture;
             wizardDeathTexture = deathTexture;
@@ -53,7 +56,7 @@ namespace GameDev.Core.Player
             playerMovementManager = movementManager;
 
             Acceleration = new Vector2(0.1f, 0.1f);
-            Position = new Vector2(1, 1);
+            Position = new Vector2(Hitbox.X, Hitbox.Y);
             Speed = new Vector2(2, 2);
 
             animations = new Animation[]
@@ -72,6 +75,9 @@ namespace GameDev.Core.Player
             IsFlashing = false;
             flashTime = 0f;
             flashTimer = 0f;
+
+            hitboxTexture = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
+            hitboxTexture.SetData(new[] { Color.White });
         }
 
         public void Update(GameTime gameTime)
@@ -101,8 +107,6 @@ namespace GameDev.Core.Player
                 currentTexture = currentAnimation == animations[0] ? wizardRunTexture : wizardIdleTexture;
             }
 
-
-
             SpriteEffects spriteEffects = isFacingRight ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Vector2 drawPosition = Position;
             Color drawColor = Color.White;
@@ -120,6 +124,9 @@ namespace GameDev.Core.Player
             }
 
             spriteBatch.Draw(currentTexture, drawPosition, currentAnimation.currentFrame.sourceRectangle, drawColor, 0f, Vector2.Zero, 1f, spriteEffects, 0f);
+
+            // Teken de hitbox
+            spriteBatch.Draw(hitboxTexture, Hitbox, Color.Red * 0.5f);
         }
 
         private void Move()
@@ -151,7 +158,6 @@ namespace GameDev.Core.Player
 
                 if (!collisionDetected)
                 {
-                    /*Position = new Vector2(Position.X + Direction.X * Speed.X, Position.Y);*/
                     Position = new Vector2(
                         Math.Clamp(Position.X + Direction.X * Speed.X, 0, 800 - Hitbox.Width),
                         Position.Y
