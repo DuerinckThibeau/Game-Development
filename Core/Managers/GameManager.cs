@@ -74,9 +74,16 @@ namespace GameDev.Core.Managers
                     case GameState.Level1:
                         _currentLevel = GameState.Level1;
                         _level1 = new Level1();
-                        wizard.futureHitbox.X = (int)MapManager.PlayerSpawn.X;
-                        wizard.futureHitbox.Y = (int)MapManager.PlayerSpawn.Y;
+                        wizard.Hitbox.X = (int)MapManager.PlayerSpawn.X;
+                        wizard.Hitbox.Y = (int)MapManager.PlayerSpawn.Y;
                         break;
+                    case GameState.Level2:
+                        _currentLevel = GameState.Level2;
+                        _level2 = new Level2();
+                        wizard.Hitbox.X = (int)MapManager.PlayerSpawn.X;
+                        wizard.Hitbox.Y = (int)MapManager.PlayerSpawn.Y;
+                        break;
+
                 }
             }
             switch (_currentState)
@@ -89,6 +96,9 @@ namespace GameDev.Core.Managers
                     break;
                 case GameState.Level1:
                     _level1.Update(gameTime);
+                    break;
+                case GameState.Level2:
+                    _level2.Update(gameTime);
                     break;
 
             }
@@ -106,6 +116,9 @@ namespace GameDev.Core.Managers
                     break;
                 case GameState.Level1:
                     _level1.Draw(spritebatch);
+                    break;
+                case GameState.Level2:
+                    _level2.Draw(spritebatch);
                     break;
             }
         }

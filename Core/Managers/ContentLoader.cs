@@ -30,6 +30,10 @@ namespace GameDev.Core.Managers
         public static Texture2D MapBackground;
         public static Texture2D TilesetTexture;
 
+        // Level 2
+        public static TmxMap Level2;
+        public static Texture2D CaveBackground;
+
 
         public ContentLoader(ContentManager contentManager)
         {
@@ -59,6 +63,10 @@ namespace GameDev.Core.Managers
             Level1 = new TmxMap("Content/Maps/Level_1.tmx");
             MapBackground = _content.Load<Texture2D>("Tiles/World1");
             TilesetTexture = _content.Load<Texture2D>("Tiles/Assets");
+
+            // Level 2
+            Level2 = new TmxMap("Content/Maps/Level_2.tmx");
+            CaveBackground = _content.Load<Texture2D>("Tiles/World2");
         }
     }
 }
