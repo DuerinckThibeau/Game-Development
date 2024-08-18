@@ -28,6 +28,9 @@
 #begin Maps/Level_1.tmx
 /copy:Maps/Level_1.tmx
 
+#begin Maps/Level_2.tmx
+/copy:Maps/Level_2.tmx
+
 #begin Tiles/Assets.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -40,18 +43,6 @@
 /processorParam:TextureFormat=Color
 /build:Tiles/Assets.png
 
-#begin Tiles/Background_1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Tiles/Background_1.png
-
 #begin Tiles/World1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -63,6 +54,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Tiles/World1.png
+
+#begin Tiles/World2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Tiles/World2.png
 
 #begin UI/DeathScreen.png
 /importer:TextureImporter

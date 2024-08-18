@@ -50,6 +50,11 @@ namespace GameDev.Core.Screens
                     break;
                 }
             }
+
+            if (MapManager.CheckNextLevelTrigger(GameManager.wizard.Hitbox))
+            {
+                GameManager.getInstance().UpdateGameState(GameState.Level2);
+            }
         }
         public void Draw (SpriteBatch spriteBatch) 
         {
