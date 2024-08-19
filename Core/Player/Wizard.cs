@@ -19,8 +19,6 @@ namespace GameDev.Core.Player
         Animation[] animations;
 
         MovementManager playerMovementManager;
-        private MapManager mapManager;
-        private GameManager gameManager;
         private SpriteBatch spriteBatch;
 
         public Vector2 Position { get; set; }

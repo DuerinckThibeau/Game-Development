@@ -12,7 +12,6 @@ namespace GameDev.Core.Screens
         private Texture2D _backgroundTexture;
         private Texture2D _startButtonTexture;
         private Rectangle _startButtonRectangle;
-        private ContentLoader _contentLoader;
 
         public StartScreen()
         {

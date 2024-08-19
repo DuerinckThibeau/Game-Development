@@ -14,7 +14,6 @@ namespace GameDev
     {
         private GraphicsDeviceManager _graphics;
         public static SpriteBatch _spriteBatch;
-        private GameManager _gameManager;
         private float _scale;
         private Matrix _transformMatrix;
 
