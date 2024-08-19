@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,7 +27,7 @@ namespace GameDev.Core.Screens
                 if(obj.Name == "SnakeSpawn")
                 {
                     Vector2 spawnPosition = new Vector2((float)obj.X, (float)obj.Y);
-                    Snake newSnake = new Snake(ContentLoader.SnakeTexture, spawnPosition, 1f);
+                    Snake newSnake = new Snake(ContentLoader.SnakeTexture, spawnPosition, 1f, 100f, spawnPosition.X + 100, spawnPosition.X - 100);
                     _snakes.Add(newSnake);
                 }
             }
