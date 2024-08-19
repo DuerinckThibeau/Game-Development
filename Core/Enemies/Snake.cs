@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace GameDev.Core.Enemies
 {
-    internal class Snake : IGameObject
+    public class Snake : IGameObject
     {
         private Texture2D _texture;
         private Vector2 _position;

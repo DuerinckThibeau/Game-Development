@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using GameDev.Core.Enemies;
 using TiledSharp;
 
 namespace GameDev.Core.Managers
@@ -19,6 +20,9 @@ namespace GameDev.Core.Managers
         public static Vector2 PlayerSpawn;
         public static List<Rectangle> Colliders = new();
         private static Rectangle nextLevelTrigger;
+
+        public List<Snake> _snakes;
+        public List<Orc> _orcs;
 
         private Texture2D rectangleTexture;
 
@@ -59,6 +63,33 @@ namespace GameDev.Core.Managers
             else
             {
                 Console.WriteLine("Collision layer not found!");
+            }
+
+            if(GameManager.getInstance().getCurrentState() == GameState.Level1)
+            {
+                _orcs = new List<Orc>();
+                foreach (var obj in ContentLoader.Level1.ObjectGroups["Orc"].Objects)
+                {
+                    if (obj.Name == "OrcSpawn")
+                    {
+                        Vector2 spawnPosition = new Vector2((float)obj.X, (float)obj.Y);
+                        Orc newOrc = new Orc(ContentLoader.OrcTexture, spawnPosition, 1f);
+                        _orcs.Add(newOrc);
+                    }
+                }
+            }
+            else if(GameManager.getInstance().getCurrentState() == GameState.Level2)
+            {
+                _snakes = new List<Snake>();
+                foreach (var obj in ContentLoader.Level2.ObjectGroups["Snake"].Objects)
+                {
+                    if (obj.Name == "SnakeSpawn")
+                    {
+                        Vector2 spawnPosition = new Vector2((float)obj.X, (float)obj.Y);
+                        Snake newSnake = new Snake(ContentLoader.SnakeTexture, spawnPosition, 1f, 100f, spawnPosition.X + 100, spawnPosition.X - 100);
+                        _snakes.Add(newSnake);
+                    }
+                }
             }
 
             var nextLevelObject = map.ObjectGroups["NextLevel"].Objects.FirstOrDefault(o => o.Name == "NextLevel");
@@ -102,6 +133,24 @@ namespace GameDev.Core.Managers
         public static bool CheckNextLevelTrigger(Rectangle playerHitbox)
         {
             return playerHitbox.Intersects(nextLevelTrigger);
+        }
+
+        public List<Orc> getOrcs()
+        {
+            if(_orcs != null)
+            {
+                return _orcs;
+            }
+            return new List<Orc>();
+        }
+
+        public List<Snake> getSnakes()
+        {
+            if(_snakes != null)
+            {
+                return _snakes;
+            }
+            return new List<Snake>();
         }
     }
 }

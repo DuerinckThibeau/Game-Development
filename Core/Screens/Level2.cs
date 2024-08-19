@@ -21,16 +21,7 @@ namespace GameDev.Core.Screens
         {
             MapManager.Colliders.Clear();
             _mapManager = new MapManager(ContentLoader.Level2, ContentLoader.TilesetTexture);
-            _snakes = new List<Snake>();
-            foreach (var obj in ContentLoader.Level2.ObjectGroups["Snake"].Objects)
-            {
-                if(obj.Name == "SnakeSpawn")
-                {
-                    Vector2 spawnPosition = new Vector2((float)obj.X, (float)obj.Y);
-                    Snake newSnake = new Snake(ContentLoader.SnakeTexture, spawnPosition, 1f, 100f, spawnPosition.X + 100, spawnPosition.X - 100);
-                    _snakes.Add(newSnake);
-                }
-            }
+            _snakes = _mapManager.getSnakes();
             
         }
 
